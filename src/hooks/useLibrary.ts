@@ -138,7 +138,6 @@ export function useReadingList(userId?: string | null) {
 export function useSetListStatus(kind: "anime" | "manga") {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const table = kind === "anime" ? "watchlists" : "reading_lists";
   return useMutation({
     mutationFn: async (input: {
       media_id: number;
@@ -148,38 +147,53 @@ export function useSetListStatus(kind: "anime" | "manga") {
       total?: number | null;
     }) => {
       if (!user) throw new Error("Connectez-vous pour gérer votre liste.");
-      const idColumn = kind === "anime" ? "anime_id" : "manga_id";
-      if (input.status === null) {
-        const { error } = await supabase
-          .from(table)
-          .delete()
-          .eq("user_id", user.id)
-          .eq(idColumn, input.media_id);
+
+      if (kind === "anime") {
+        if (input.status === null) {
+          const { error } = await supabase
+            .from("watchlists")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("anime_id", input.media_id);
+          if (error) throw error;
+          return null;
+        }
+        const { error } = await supabase.from("watchlists").upsert(
+          {
+            user_id: user.id,
+            anime_id: input.media_id,
+            status: input.status,
+            title: input.title ?? null,
+            cover_image: input.cover_image ?? null,
+            total_episodes: input.total ?? null,
+          },
+          { onConflict: "user_id,anime_id" },
+        );
         if (error) throw error;
-        return null;
+      } else {
+        if (input.status === null) {
+          const { error } = await supabase
+            .from("reading_lists")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("manga_id", input.media_id);
+          if (error) throw error;
+          return null;
+        }
+        const { error } = await supabase.from("reading_lists").upsert(
+          {
+            user_id: user.id,
+            manga_id: input.media_id,
+            status: input.status,
+            title: input.title ?? null,
+            cover_image: input.cover_image ?? null,
+            total_chapters: input.total ?? null,
+          },
+          { onConflict: "user_id,manga_id" },
+        );
+        if (error) throw error;
       }
-      const payload =
-        kind === "anime"
-          ? {
-              user_id: user.id,
-              anime_id: input.media_id,
-              status: input.status,
-              title: input.title ?? null,
-              cover_image: input.cover_image ?? null,
-              total_episodes: input.total ?? null,
-            }
-          : {
-              user_id: user.id,
-              manga_id: input.media_id,
-              status: input.status,
-              title: input.title ?? null,
-              cover_image: input.cover_image ?? null,
-              total_chapters: input.total ?? null,
-            };
-      const { error } = await supabase
-        .from(table)
-        .upsert(payload, { onConflict: `user_id,${idColumn}` });
-      if (error) throw error;
+
       await awardXp(
         input.status === "completed"
           ? kind === "anime"
@@ -189,6 +203,7 @@ export function useSetListStatus(kind: "anime" | "manga") {
       );
       return input.status;
     },
+
     onSuccess: (status) => {
       void qc.invalidateQueries({ queryKey: ["watchlist"] });
       void qc.invalidateQueries({ queryKey: ["reading-list"] });

@@ -10,20 +10,34 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as AnimeIndexRouteImport } from './routes/anime.index'
 import { Route as AnimeIdRouteImport } from './routes/anime.$id'
 import { Route as MangaIndexRouteImport } from './routes/manga.index'
 import { Route as MangaIdRouteImport } from './routes/manga.$id'
+import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnimeIndexRoute = AnimeIndexRouteImport.update({
@@ -46,55 +60,104 @@ const MangaIdRoute = MangaIdRouteImport.update({
   path: '/manga/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsIndexRoute = NewsIndexRouteImport.update({
+  id: '/news/',
+  path: '/news/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/news/$slug',
+  path: '/news/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/explore': typeof ExploreRoute
+  '/search': typeof SearchRoute
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
+  '/news/': typeof NewsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/explore': typeof ExploreRoute
+  '/search': typeof SearchRoute
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/anime': typeof AnimeIndexRoute
   '/manga': typeof MangaIndexRoute
+  '/news': typeof NewsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/explore': typeof ExploreRoute
+  '/search': typeof SearchRoute
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
+  '/news/': typeof NewsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/explore' | '/anime/$id' | '/manga/$id' | '/anime/' | '/manga/'
+    | '/'
+    | '/calendar'
+    | '/explore'
+    | '/search'
+    | '/anime/$id'
+    | '/manga/$id'
+    | '/news/$slug'
+    | '/anime/'
+    | '/manga/'
+    | '/news/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/anime/$id' | '/manga/$id' | '/anime' | '/manga'
+  to:
+    | '/'
+    | '/calendar'
+    | '/explore'
+    | '/search'
+    | '/anime/$id'
+    | '/manga/$id'
+    | '/news/$slug'
+    | '/anime'
+    | '/manga'
+    | '/news'
   id:
     | '__root__'
     | '/'
+    | '/calendar'
     | '/explore'
+    | '/search'
     | '/anime/$id'
     | '/manga/$id'
+    | '/news/$slug'
     | '/anime/'
     | '/manga/'
+    | '/news/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalendarRoute: typeof CalendarRoute
   ExploreRoute: typeof ExploreRoute
+  SearchRoute: typeof SearchRoute
   AnimeIdRoute: typeof AnimeIdRoute
   MangaIdRoute: typeof MangaIdRoute
+  NewsSlugRoute: typeof NewsSlugRoute
   AnimeIndexRoute: typeof AnimeIndexRoute
   MangaIndexRoute: typeof MangaIndexRoute
+  NewsIndexRoute: typeof NewsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -106,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/anime/': {
@@ -141,16 +218,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MangaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news/': {
+      id: '/news/'
+      path: '/news'
+      fullPath: '/news/'
+      preLoaderRoute: typeof NewsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/news/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalendarRoute: CalendarRoute,
   ExploreRoute: ExploreRoute,
+  SearchRoute: SearchRoute,
   AnimeIdRoute: AnimeIdRoute,
   MangaIdRoute: MangaIdRoute,
+  NewsSlugRoute: NewsSlugRoute,
   AnimeIndexRoute: AnimeIndexRoute,
   MangaIndexRoute: MangaIndexRoute,
+  NewsIndexRoute: NewsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

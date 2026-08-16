@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as AnimeIndexRouteImport } from './routes/anime.index'
+import { Route as AnimeIdRouteImport } from './routes/anime.$id'
+import { Route as MangaIndexRouteImport } from './routes/manga.index'
+import { Route as MangaIdRouteImport } from './routes/manga.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +26,75 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnimeIndexRoute = AnimeIndexRouteImport.update({
+  id: '/anime/',
+  path: '/anime/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnimeIdRoute = AnimeIdRouteImport.update({
+  id: '/anime/$id',
+  path: '/anime/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MangaIndexRoute = MangaIndexRouteImport.update({
+  id: '/manga/',
+  path: '/manga/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MangaIdRoute = MangaIdRouteImport.update({
+  id: '/manga/$id',
+  path: '/manga/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/anime/$id': typeof AnimeIdRoute
+  '/manga/$id': typeof MangaIdRoute
+  '/anime/': typeof AnimeIndexRoute
+  '/manga/': typeof MangaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/anime/$id': typeof AnimeIdRoute
+  '/manga/$id': typeof MangaIdRoute
+  '/anime': typeof AnimeIndexRoute
+  '/manga': typeof MangaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
+  '/anime/$id': typeof AnimeIdRoute
+  '/manga/$id': typeof MangaIdRoute
+  '/anime/': typeof AnimeIndexRoute
+  '/manga/': typeof MangaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/explore'
+  fullPaths:
+    '/' | '/explore' | '/anime/$id' | '/manga/$id' | '/anime/' | '/manga/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore'
-  id: '__root__' | '/' | '/explore'
+  to: '/' | '/explore' | '/anime/$id' | '/manga/$id' | '/anime' | '/manga'
+  id:
+    | '__root__'
+    | '/'
+    | '/explore'
+    | '/anime/$id'
+    | '/manga/$id'
+    | '/anime/'
+    | '/manga/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
+  AnimeIdRoute: typeof AnimeIdRoute
+  MangaIdRoute: typeof MangaIdRoute
+  AnimeIndexRoute: typeof AnimeIndexRoute
+  MangaIndexRoute: typeof MangaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +113,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anime/': {
+      id: '/anime/'
+      path: '/anime'
+      fullPath: '/anime/'
+      preLoaderRoute: typeof AnimeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/anime/$id': {
+      id: '/anime/$id'
+      path: '/anime/$id'
+      fullPath: '/anime/$id'
+      preLoaderRoute: typeof AnimeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manga/': {
+      id: '/manga/'
+      path: '/manga'
+      fullPath: '/manga/'
+      preLoaderRoute: typeof MangaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manga/$id': {
+      id: '/manga/$id'
+      path: '/manga/$id'
+      fullPath: '/manga/$id'
+      preLoaderRoute: typeof MangaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
+  AnimeIdRoute: AnimeIdRoute,
+  MangaIdRoute: MangaIdRoute,
+  AnimeIndexRoute: AnimeIndexRoute,
+  MangaIndexRoute: MangaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -97,7 +97,7 @@ function CommunityPage() {
           <EmptyState title="Aucune publication" description="Soyez le premier à lancer la discussion." />
         )}
         {posts.data?.map((p) => {
-          const liked = Boolean(likes?.includes(p.id));
+          const liked = Boolean(likes?.has(p.id));
           return (
             <article key={p.id} className="rounded-2xl border border-border bg-surface p-4">
               <header className="flex items-center gap-2">
@@ -125,7 +125,7 @@ function CommunityPage() {
               <footer className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
                 <button
                   className="inline-flex min-h-9 items-center gap-1.5"
-                  onClick={() => toggleLike.mutate({ postId: p.id, liked })}
+                  onClick={() => toggleLike.mutate({ target_type: "post", target_id: p.id, liked, owner_id: p.user_id })}
                 >
                   <Heart className={liked ? "size-4 fill-primary text-primary" : "size-4"} />
                   {p.likes_count}

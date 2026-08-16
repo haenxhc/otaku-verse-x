@@ -3,7 +3,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
@@ -53,18 +52,6 @@ function LoginPage() {
     } finally {
       setBusy(false);
     }
-  }
-
-  async function google() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Connexion Google impossible pour le moment.");
-      return;
-    }
-    if (result.redirected) return;
-    void navigate({ to: "/" });
   }
 
   return (
@@ -121,10 +108,6 @@ function LoginPage() {
           {mode === "login" ? "Se connecter" : "Créer mon compte"}
         </Button>
       </form>
-
-      <Button variant="secondary" className="mt-3 min-h-12 w-full" onClick={() => void google()}>
-        Continuer avec Google
-      </Button>
 
       <button
         className="mt-5 w-full text-sm text-accent"

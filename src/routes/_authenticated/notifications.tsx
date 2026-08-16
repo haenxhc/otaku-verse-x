@@ -15,7 +15,7 @@ function NotificationsPage() {
   const markRead = useMarkNotificationsRead();
 
   useEffect(() => {
-    if (data && data.some((n) => !n.is_read)) markRead.mutate();
+    if (data && data.some((n) => !n.is_read)) markRead.mutate(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.length]);
 

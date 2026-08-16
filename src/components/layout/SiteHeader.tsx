@@ -136,7 +136,7 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-1 md:ml-0">
           <Button variant="ghost" size="icon" asChild className="md:hidden" aria-label="Recherche">
-            <Link to="/search">
+            <Link to="/search" search={{ q: "" }}>
               <Search className="size-5" />
             </Link>
           </Button>

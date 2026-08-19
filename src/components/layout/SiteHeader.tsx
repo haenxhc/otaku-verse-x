@@ -1,8 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, LogIn, Menu, Search, Shield, Sparkles, User } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Bell, LogIn, LogOut, Menu, Search, Shield, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth, useIsAdmin, useMyProfile } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useCommunity";
@@ -151,30 +160,55 @@ export function SiteHeader() {
                   )}
                 </Link>
               </Button>
-              <Link
-                to="/profile/$username"
-                params={{ username: profile?.username ?? "" }}
-                className="flex items-center gap-2 rounded-full border border-border bg-surface py-1 pr-3 pl-1"
-              >
-                {profile?.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt=""
-                    className="size-7 rounded-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <span className="flex size-7 items-center justify-center rounded-full bg-surface-2">
-                    <User className="size-4" />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 rounded-full border border-border bg-surface py-1 pr-3 pl-1">
+                  {profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt=""
+                      className="size-7 rounded-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="flex size-7 items-center justify-center rounded-full bg-surface-2">
+                      <User className="size-4" />
+                    </span>
+                  )}
+                  <span className="hidden text-xs sm:block">
+                    <span className="block leading-tight font-semibold">
+                      {profile?.username ?? "…"}
+                    </span>
+                    <span className="block text-[10px] leading-tight text-accent">
+                      {levelFromXp(profile?.xp ?? 0).name}
+                    </span>
                   </span>
-                )}
-                <span className="hidden text-xs sm:block">
-                  <span className="block leading-tight font-semibold">{profile?.username ?? "…"}</span>
-                  <span className="block text-[10px] leading-tight text-accent">
-                    {levelFromXp(profile?.xp ?? 0).name}
-                  </span>
-                </span>
-              </Link>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/$username" params={{ username: profile?.username ?? "" }}>
+                      Mon profil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-list">Ma liste</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/favorites">Favoris</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings">Paramètres</Link>
+                  </DropdownMenuItem>
+                  {roles?.isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">Administration</Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="gap-2">
+                    <LogOut className="size-4" /> Se déconnecter
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <Button asChild size="sm" className="gap-1.5">

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -63,7 +64,30 @@ function LoginPage() {
         Synchronisez vos listes, favoris, notes et votre progression XP.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-3">
+      <Button
+        type="button"
+        variant="secondary"
+        className="mt-6 min-h-12 w-full gap-2"
+        disabled={busy}
+        onClick={async () => {
+          try {
+            await lovable.auth.signInWithOAuth("google", {
+              redirect_uri: window.location.origin,
+            });
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Connexion Google impossible");
+          }
+        }}
+      >
+        Continuer avec Google
+      </Button>
+
+      <div className="my-5 flex items-center gap-3 text-[11px] text-muted-foreground">
+        <span className="h-px flex-1 bg-border" /> ou par e-mail{" "}
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-3">
         {mode === "signup" && (
           <div>
             <label htmlFor="username" className="text-sm font-medium">Pseudo</label>

@@ -187,6 +187,36 @@ export type Database = {
         }
         Relationships: []
       }
+      kobara_webhook_events: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          event_type: string
+          id: string
+          payload: Json
+          payment_id: string | null
+          processed: boolean
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          payment_id?: string | null
+          processed?: boolean
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          payment_id?: string | null
+          processed?: boolean
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -316,6 +346,71 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          checkout_url: string | null
+          created_at: string
+          currency: string
+          gateway: string
+          id: string
+          kobara_payment_id: string | null
+          kobara_reference: string | null
+          method: Database["public"]["Enums"]["payment_method"]
+          paid_at: string | null
+          plan_id: string | null
+          premium_expires_at: string | null
+          provider_transaction_id: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          checkout_url?: string | null
+          created_at?: string
+          currency?: string
+          gateway?: string
+          id?: string
+          kobara_payment_id?: string | null
+          kobara_reference?: string | null
+          method?: Database["public"]["Enums"]["payment_method"]
+          paid_at?: string | null
+          plan_id?: string | null
+          premium_expires_at?: string | null
+          provider_transaction_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          checkout_url?: string | null
+          created_at?: string
+          currency?: string
+          gateway?: string
+          id?: string
+          kobara_payment_id?: string | null
+          kobara_reference?: string | null
+          method?: Database["public"]["Enums"]["payment_method"]
+          paid_at?: string | null
+          plan_id?: string | null
+          premium_expires_at?: string | null
+          provider_transaction_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "premium_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           comments_count: number
@@ -360,6 +455,87 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      premium_plans: {
+        Row: {
+          amount_htg: number
+          code: string
+          created_at: string
+          description: string | null
+          duration_days: number
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          amount_htg: number
+          code: string
+          created_at?: string
+          description?: string | null
+          duration_days: number
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          amount_htg?: number
+          code?: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      premium_subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          id: string
+          last_payment_id: string | null
+          plan_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end: string
+          id?: string
+          last_payment_id?: string | null
+          plan_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          last_payment_id?: string | null
+          plan_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_subscriptions_last_payment_id_fkey"
+            columns: ["last_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "premium_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "premium_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -618,6 +794,51 @@ export type Database = {
         }
         Relationships: []
       }
+      watch_history: {
+        Row: {
+          anime_id: number
+          completed: boolean
+          cover_image: string | null
+          created_at: string
+          duration_seconds: number | null
+          episode: number
+          id: string
+          position_seconds: number
+          source_name: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anime_id: number
+          completed?: boolean
+          cover_image?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          episode: number
+          id?: string
+          position_seconds?: number
+          source_name?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anime_id?: number
+          completed?: boolean
+          cover_image?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          episode?: number
+          id?: string
+          position_seconds?: number
+          source_name?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       watch_progress: {
         Row: {
           anime_id: number
@@ -687,6 +908,7 @@ export type Database = {
     }
     Functions: {
       award_xp: { Args: { _amount: number }; Returns: number }
+      has_active_premium: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -699,6 +921,8 @@ export type Database = {
       app_role: "admin" | "moderator" | "user"
       list_status: "planning" | "current" | "completed" | "dropped" | "paused"
       media_kind: "anime" | "manga" | "character"
+      payment_method: "moncash" | "natcash" | "kobara"
+      payment_status: "pending" | "paid" | "failed" | "expired" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -829,6 +1053,8 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       list_status: ["planning", "current", "completed", "dropped", "paused"],
       media_kind: ["anime", "manga", "character"],
+      payment_method: ["moncash", "natcash", "kobara"],
+      payment_status: ["pending", "paid", "failed", "expired", "cancelled"],
     },
   },
 } as const

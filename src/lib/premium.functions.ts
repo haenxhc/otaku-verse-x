@@ -6,8 +6,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /** Lists active Premium plans for public display. */
 export const getPremiumPlans = createServerFn({ method: "GET" }).handler(async () => {
   const { createClient } = await import("@supabase/supabase-js");
-  const type = await import("@/integrations/supabase/types");
-  const supabasePublic = createClient<type.Database>(
+  const { Database } = await import("@/integrations/supabase/types");
+  const supabasePublic = createClient<Database>(
     process.env["SUPABASE_URL"]!,
     process.env["SUPABASE_PUBLISHABLE_KEY"]!,
     {

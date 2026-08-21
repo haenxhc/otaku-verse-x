@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useServerFn } from "@tanstack/react-start";
 import { getWatchInfo } from "@/lib/watch.functions";
 
-export const Route = createFileRoute("/watch/$animeId")({
+export const Route = createFileRoute("/_authenticated/watch/$animeId")({
   head: () => ({
     meta: [
       { title: "Lecture — OtakuVerse X" },

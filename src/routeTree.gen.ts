@@ -31,6 +31,7 @@ import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as PaymentCancelRouteImport } from './routes/payment.cancel'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
+import { Route as AuthenticatedWatchAnimeIdRouteImport } from './routes/_authenticated/watch.$animeId'
 import { Route as ApiPublicWebhooksKobaraRouteImport } from './routes/api/public/webhooks/kobara'
 
 const IndexRoute = IndexRouteImport.update({
@@ -143,6 +144,12 @@ const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWatchAnimeIdRoute =
+  AuthenticatedWatchAnimeIdRouteImport.update({
+    id: '/watch/$animeId',
+    path: '/watch/$animeId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicWebhooksKobaraRoute = ApiPublicWebhooksKobaraRouteImport.update({
   id: '/api/public/webhooks/kobara',
   path: '/api/public/webhooks/kobara',
@@ -171,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/watch/$animeId': typeof AuthenticatedWatchAnimeIdRoute
   '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRoutesByTo {
@@ -195,6 +203,7 @@ export interface FileRoutesByTo {
   '/anime': typeof AnimeIndexRoute
   '/manga': typeof MangaIndexRoute
   '/news': typeof NewsIndexRoute
+  '/watch/$animeId': typeof AuthenticatedWatchAnimeIdRoute
   '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRoutesById {
@@ -221,6 +230,7 @@ export interface FileRoutesById {
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/_authenticated/watch/$animeId': typeof AuthenticatedWatchAnimeIdRoute
   '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRouteTypes {
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/anime/'
     | '/manga/'
     | '/news/'
+    | '/watch/$animeId'
     | '/api/public/webhooks/kobara'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/anime'
     | '/manga'
     | '/news'
+    | '/watch/$animeId'
     | '/api/public/webhooks/kobara'
   id:
     | '__root__'
@@ -296,6 +308,7 @@ export interface FileRouteTypes {
     | '/anime/'
     | '/manga/'
     | '/news/'
+    | '/_authenticated/watch/$animeId'
     | '/api/public/webhooks/kobara'
   fileRoutesById: FileRoutesById
 }
@@ -476,6 +489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/watch/$animeId': {
+      id: '/_authenticated/watch/$animeId'
+      path: '/watch/$animeId'
+      fullPath: '/watch/$animeId'
+      preLoaderRoute: typeof AuthenticatedWatchAnimeIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/webhooks/kobara': {
       id: '/api/public/webhooks/kobara'
       path: '/api/public/webhooks/kobara'
@@ -492,6 +512,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMyListRoute: typeof AuthenticatedMyListRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedWatchAnimeIdRoute: typeof AuthenticatedWatchAnimeIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -500,6 +521,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMyListRoute: AuthenticatedMyListRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedWatchAnimeIdRoute: AuthenticatedWatchAnimeIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

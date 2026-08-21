@@ -1,7 +1,38 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestUrl } from "@tanstack/react-start/server";
+import { createClient } from "@supabase/supabase-js";
 
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+
+/** Lists active Premium plans for public display. */
+export const getPremiumPlans = createServerFn({ method: "GET" }).handler(async () => {
+  const supabasePublic = createClient<Database>(
+    process.env["SUPABASE_URL"]!,
+    process.env["SUPABASE_PUBLISHABLE_KEY"]!,
+    {
+      auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
+      global: {
+        fetch: (input, init) => {
+          const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+          const h = new Headers(init?.headers);
+          if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+          h.set("apikey", key);
+          return fetch(input, { ...init, headers: h });
+        },
+      },
+    },
+  );
+  const { data, error } = await supabasePublic
+    .from("premium_plans")
+    .select("id, code, name, description, amount_htg, duration_days")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+});
+
 
 /** Starts a real Kobara payment (MonCash / NatCash) for a Premium plan. */
 export const createPremiumCheckout = createServerFn({ method: "POST" })

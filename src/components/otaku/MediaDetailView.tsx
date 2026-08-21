@@ -166,6 +166,18 @@ export function MediaDetailView({ id, type }: { id: number; type: MediaType }) {
             ))}
           </select>
 
+          {type === "ANIME" && user && (
+            <Button
+              variant="default"
+              className="min-h-11 gap-2 bg-gradient-to-r from-primary to-accent"
+              onClick={() => navigate({ to: "/watch/$animeId", params: { animeId: String(id) } })}
+            >
+              <Play className="size-4" />
+              Regarder
+            </Button>
+          )}
+
+
           <div className="flex items-center gap-2">
             <select
               aria-label="Ma note"

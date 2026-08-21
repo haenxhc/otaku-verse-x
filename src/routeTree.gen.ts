@@ -15,6 +15,7 @@ import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PremiumRouteImport } from './routes/premium'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
@@ -27,6 +28,8 @@ import { Route as MangaIndexRouteImport } from './routes/manga.index'
 import { Route as MangaIdRouteImport } from './routes/manga.$id'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as PaymentCancelRouteImport } from './routes/payment.cancel'
+import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
 import { Route as ApiPublicWebhooksKobaraRouteImport } from './routes/api/public/webhooks/kobara'
 
@@ -57,6 +60,11 @@ const ExploreRoute = ExploreRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PremiumRoute = PremiumRouteImport.update({
+  id: '/premium',
+  path: '/premium',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -120,6 +128,16 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/news/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentCancelRoute = PaymentCancelRouteImport.update({
+  id: '/payment/cancel',
+  path: '/payment/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment/success',
+  path: '/payment/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   id: '/profile/$username',
   path: '/profile/$username',
@@ -137,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/premium': typeof PremiumRoute
   '/search': typeof SearchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
@@ -146,6 +165,8 @@ export interface FileRoutesByFullPath {
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
@@ -158,6 +179,7 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/premium': typeof PremiumRoute
   '/search': typeof SearchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/favorites': typeof AuthenticatedFavoritesRoute
@@ -167,6 +189,8 @@ export interface FileRoutesByTo {
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/anime': typeof AnimeIndexRoute
   '/manga': typeof MangaIndexRoute
@@ -181,6 +205,7 @@ export interface FileRoutesById {
   '/community': typeof CommunityRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/premium': typeof PremiumRoute
   '/search': typeof SearchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
@@ -190,6 +215,8 @@ export interface FileRoutesById {
   '/anime/$id': typeof AnimeIdRoute
   '/manga/$id': typeof MangaIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
@@ -204,6 +231,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/explore'
     | '/login'
+    | '/premium'
     | '/search'
     | '/admin'
     | '/favorites'
@@ -213,6 +241,8 @@ export interface FileRouteTypes {
     | '/anime/$id'
     | '/manga/$id'
     | '/news/$slug'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/profile/$username'
     | '/anime/'
     | '/manga/'
@@ -225,6 +255,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/explore'
     | '/login'
+    | '/premium'
     | '/search'
     | '/admin'
     | '/favorites'
@@ -234,6 +265,8 @@ export interface FileRouteTypes {
     | '/anime/$id'
     | '/manga/$id'
     | '/news/$slug'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/profile/$username'
     | '/anime'
     | '/manga'
@@ -247,6 +280,7 @@ export interface FileRouteTypes {
     | '/community'
     | '/explore'
     | '/login'
+    | '/premium'
     | '/search'
     | '/_authenticated/admin'
     | '/_authenticated/favorites'
@@ -256,6 +290,8 @@ export interface FileRouteTypes {
     | '/anime/$id'
     | '/manga/$id'
     | '/news/$slug'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/profile/$username'
     | '/anime/'
     | '/manga/'
@@ -270,10 +306,13 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRoute
   ExploreRoute: typeof ExploreRoute
   LoginRoute: typeof LoginRoute
+  PremiumRoute: typeof PremiumRoute
   SearchRoute: typeof SearchRoute
   AnimeIdRoute: typeof AnimeIdRoute
   MangaIdRoute: typeof MangaIdRoute
   NewsSlugRoute: typeof NewsSlugRoute
+  PaymentCancelRoute: typeof PaymentCancelRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   AnimeIndexRoute: typeof AnimeIndexRoute
   MangaIndexRoute: typeof MangaIndexRoute
@@ -323,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/premium': {
+      id: '/premium'
+      path: '/premium'
+      fullPath: '/premium'
+      preLoaderRoute: typeof PremiumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -409,6 +455,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/cancel': {
+      id: '/payment/cancel'
+      path: '/payment/cancel'
+      fullPath: '/payment/cancel'
+      preLoaderRoute: typeof PaymentCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/payment/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile/$username': {
       id: '/profile/$username'
       path: '/profile/$username'
@@ -452,10 +512,13 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRoute,
   ExploreRoute: ExploreRoute,
   LoginRoute: LoginRoute,
+  PremiumRoute: PremiumRoute,
   SearchRoute: SearchRoute,
   AnimeIdRoute: AnimeIdRoute,
   MangaIdRoute: MangaIdRoute,
   NewsSlugRoute: NewsSlugRoute,
+  PaymentCancelRoute: PaymentCancelRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
   AnimeIndexRoute: AnimeIndexRoute,
   MangaIndexRoute: MangaIndexRoute,

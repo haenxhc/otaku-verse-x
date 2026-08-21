@@ -35,6 +35,7 @@ const STATUSES: ListStatus[] = ["planning", "current", "completed", "paused", "d
 
 export function MediaDetailView({ id, type }: { id: number; type: MediaType }) {
   const kind = type === "ANIME" ? "anime" : "manga";
+  const navigate = useNavigate();
   const { user } = useAuth();
   const query = useQuery({
     queryKey: ["media", type, id],

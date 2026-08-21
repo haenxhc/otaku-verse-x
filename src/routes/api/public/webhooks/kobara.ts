@@ -8,11 +8,11 @@ export const Route = createFileRoute("/api/public/webhooks/kobara")({
         const rawBody = await request.text();
         const signature = request.headers.get("Kobara-Signature");
         const timestamp = request.headers.get("Kobara-Timestamp");
+        const event = JSON.parse(rawBody) as Record<string, unknown>;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         // Log the event for audit and replay protection before processing.
-        const event = await request.json().catch(() => ({}));
         const { data: eventRow } = await supabaseAdmin
           .from("kobara_webhook_events")
           .insert({

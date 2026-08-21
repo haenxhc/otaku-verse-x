@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/public/webhooks/kobara")({
             event_id: event["id"] ?? null,
             event_type: event["type"] ?? "unknown",
             payment_id: event["data"]?.["payment_id"] ?? event["data"]?.["id"] ?? null,
-            payload: event as unknown as object,
+            payload: event as unknown as object & { [key: string]: unknown },
             processed: false,
           })
           .select("id")

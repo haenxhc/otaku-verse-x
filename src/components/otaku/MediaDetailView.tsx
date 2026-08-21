@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Heart, Star } from "lucide-react";
+import { Heart, Play, Star } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+
 
 import { MediaRail } from "@/components/otaku/MediaRail";
 import { ErrorState } from "@/components/otaku/EmptyState";

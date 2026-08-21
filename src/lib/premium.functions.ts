@@ -60,7 +60,7 @@ export const createPremiumCheckout = createServerFn({ method: "POST" })
         provider: data.method,
         customer: {
           name: profile?.display_name ?? profile?.username ?? "Membre OtakuVerse X",
-          email: context.claims?.email as string | undefined,
+          ...(context.claims?.email ? { email: context.claims.email as string } : {}),
         },
         metadata: { payment_id: row.id, user_id: userId, plan_code: plan.code },
         success_url: `${origin}/payment/success?ref=${row.id}`,

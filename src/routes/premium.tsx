@@ -38,7 +38,7 @@ function PremiumPage() {
 
   const plansQuery = useQuery({
     queryKey: ["premium-plans"],
-    queryFn: () => listPlans({ data: {} }),
+    queryFn: () => listPlans(),
   });
 
   const checkoutMutation = useMutation({

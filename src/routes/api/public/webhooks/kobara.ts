@@ -1,6 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyKobaraSignature } from "@/lib/kobara.server";
 
+interface KobaraWebhookEvent {
+  id?: string;
+  type?: string;
+  data?: {
+    payment_id?: string;
+    id?: string;
+  } & Record<string, unknown>;
+}
+
 export const Route = createFileRoute("/api/public/webhooks/kobara")({
   server: {
     handlers: {
@@ -8,7 +17,8 @@ export const Route = createFileRoute("/api/public/webhooks/kobara")({
         const rawBody = await request.text();
         const signature = request.headers.get("Kobara-Signature");
         const timestamp = request.headers.get("Kobara-Timestamp");
-        const event = JSON.parse(rawBody) as Record<string, unknown>;
+
+        const event: KobaraWebhookEvent = JSON.parse(rawBody);
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -16,26 +26,26 @@ export const Route = createFileRoute("/api/public/webhooks/kobara")({
         const { data: eventRow } = await supabaseAdmin
           .from("kobara_webhook_events")
           .insert({
-            event_id: event?.id ?? null,
-            event_type: event?.type ?? "unknown",
-            payment_id: event?.data?.payment_id ?? event?.data?.id ?? null,
-            payload: event,
+            event_id: event["id"] ?? null,
+            event_type: event["type"] ?? "unknown",
+            payment_id: event["data"]?.["payment_id"] ?? event["data"]?.["id"] ?? null,
+            payload: event as unknown as object,
             processed: false,
           })
           .select("id")
           .single();
 
         if (!verifyKobaraSignature(rawBody, signature, timestamp)) {
-          console.error("Kobara webhook signature mismatch", { eventId: event?.id });
+          console.error("Kobara webhook signature mismatch", { eventId: event["id"] });
           return new Response("Invalid signature", { status: 401 });
         }
 
-        const paymentId = event?.data?.payment_id ?? event?.data?.id;
+        const paymentId = event["data"]?.["payment_id"] ?? event["data"]?.["id"];
         if (!paymentId || typeof paymentId !== "string") {
           return new Response("Missing payment id", { status: 400 });
         }
 
-        const { fetchKobaraPayment, mapKobaraStatus } = await import("@/lib/kobara.server");
+        const { fetchKobaraPayment } = await import("@/lib/kobara.server");
         const { applyKobaraPaymentState } = await import("@/lib/premium.server");
 
         const kobara = await fetchKobaraPayment(paymentId);

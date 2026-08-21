@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Crown, Play, Sparkles, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
-import { createPremiumCheckout } from "@/lib/premium.functions";
+import { createPremiumCheckout, getPremiumPlans } from "@/lib/premium.functions";
 import { useServerFn } from "@tanstack/react-start";
+import type { Database } from "@/integrations/supabase/types";
+
+type Plan = Pick<
+  Database["public"]["Tables"]["premium_plans"]["Row"],
+  "id" | "code" | "name" | "description" | "amount_htg" | "duration_days"
+>;
 
 export const Route = createFileRoute("/premium")({
   head: () => ({
@@ -24,23 +30,15 @@ export const Route = createFileRoute("/premium")({
 });
 
 function PremiumPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const checkout = useServerFn(createPremiumCheckout);
+  const listPlans = useServerFn(getPremiumPlans);
   const [selectedMethod, setSelectedMethod] = useState<"moncash" | "natcash" | "kobara">("moncash");
 
   const plansQuery = useQuery({
     queryKey: ["premium-plans"],
-    queryFn: async () => {
-      const { data, error } = await queryClient.getQueryCache().find({ queryKey: ["supabase-public-client"] })?.state?.data
-        ?.from("premium_plans")
-        .select("id, code, name, description, amount_htg, duration_days")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true }) ?? { data: null, error: null };
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => listPlans({ data: {} }),
   });
 
   const checkoutMutation = useMutation({
@@ -80,7 +78,7 @@ function PremiumPage() {
       )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {plansQuery.data?.map((plan) => (
+        {plansQuery.data?.map((plan: Plan) => (
           <Card key={plan.code} className="border-2 border-primary/20 relative overflow-hidden">
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary to-accent" />
             <CardHeader>
@@ -143,3 +141,4 @@ function PremiumPage() {
     </div>
   );
 }
+

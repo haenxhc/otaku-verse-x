@@ -28,6 +28,7 @@ import { Route as MangaIdRouteImport } from './routes/manga.$id'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
+import { Route as ApiPublicWebhooksKobaraRouteImport } from './routes/api/public/webhooks/kobara'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -124,6 +125,11 @@ const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksKobaraRoute = ApiPublicWebhooksKobaraRouteImport.update({
+  id: '/api/public/webhooks/kobara',
+  path: '/api/public/webhooks/kobara',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/anime': typeof AnimeIndexRoute
   '/manga': typeof MangaIndexRoute
   '/news': typeof NewsIndexRoute
+  '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/anime/': typeof AnimeIndexRoute
   '/manga/': typeof MangaIndexRoute
   '/news/': typeof NewsIndexRoute
+  '/api/public/webhooks/kobara': typeof ApiPublicWebhooksKobaraRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/anime/'
     | '/manga/'
     | '/news/'
+    | '/api/public/webhooks/kobara'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/anime'
     | '/manga'
     | '/news'
+    | '/api/public/webhooks/kobara'
   id:
     | '__root__'
     | '/'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/anime/'
     | '/manga/'
     | '/news/'
+    | '/api/public/webhooks/kobara'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   AnimeIndexRoute: typeof AnimeIndexRoute
   MangaIndexRoute: typeof MangaIndexRoute
   NewsIndexRoute: typeof NewsIndexRoute
+  ApiPublicWebhooksKobaraRoute: typeof ApiPublicWebhooksKobaraRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -403,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/kobara': {
+      id: '/api/public/webhooks/kobara'
+      path: '/api/public/webhooks/kobara'
+      fullPath: '/api/public/webhooks/kobara'
+      preLoaderRoute: typeof ApiPublicWebhooksKobaraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -440,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnimeIndexRoute: AnimeIndexRoute,
   MangaIndexRoute: MangaIndexRoute,
   NewsIndexRoute: NewsIndexRoute,
+  ApiPublicWebhooksKobaraRoute: ApiPublicWebhooksKobaraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

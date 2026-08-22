@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/watch/$animeId")({
 });
 
 function WatchPage() {
-  const { animeId } = useParams({ from: "/watch/$animeId" }) as { animeId: string };
+  const { animeId } = useParams({ from: "/_authenticated/watch/$animeId" });
   const navigate = useNavigate();
   const { user } = useAuth();
   const videoRef = useRef<HTMLVideoElement | null>(null);

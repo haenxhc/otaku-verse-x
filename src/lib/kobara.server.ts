@@ -28,11 +28,16 @@ export interface KobaraPayment {
   transaction_id?: string | null;
 }
 
-function secretKey(): string {
-  const key = process.env["KOBARA_SECRET_KEY"];
+/**
+ * API key used to authenticate against Kobara.
+ * Prefers the secret key, falls back to the public/publishable key when the
+ * project is configured with one only.
+ */
+function apiKey(): string {
+  const key = process.env["KOBARA_SECRET_KEY"] || process.env["KOBARA_PUBLIC_KEY"];
   if (!key) {
     throw new Error(
-      "Paiements indisponibles : la clé KOBARA_SECRET_KEY n'est pas configurée sur le serveur.",
+      "Paiements indisponibles : aucune clé Kobara (KOBARA_PUBLIC_KEY ou KOBARA_SECRET_KEY) n'est configurée.",
     );
   }
   return key;
@@ -63,7 +68,7 @@ export async function createKobaraPayment(input: CreatePaymentInput): Promise<Ko
   const res = await fetch(`${KOBARA_BASE_URL}/api/v1/payments`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${secretKey()}`,
+      Authorization: `Bearer ${apiKey()}`,
       "Content-Type": "application/json",
       "Idempotency-Key": input.idempotencyKey,
     },
@@ -85,7 +90,7 @@ export async function createKobaraPayment(input: CreatePaymentInput): Promise<Ko
     console.error("Kobara create payment failed", res.status, text.slice(0, 500));
     if (res.status === 401 || res.status === 403) {
       throw new Error(
-        "Paiement refusé par Kobara : la clé KOBARA_SECRET_KEY est invalide ou expirée. Mets à jour la clé secrète dans les paramètres du projet.",
+        "Paiement refusé par Kobara : la clé Kobara est invalide ou expirée. Mets à jour KOBARA_PUBLIC_KEY (ou KOBARA_SECRET_KEY) dans les paramètres du projet.",
       );
     }
     throw new Error("Le paiement n'a pas pu être initialisé auprès de Kobara.");
@@ -100,7 +105,7 @@ export async function createKobaraPayment(input: CreatePaymentInput): Promise<Ko
 /** Reads the current state of a payment from Kobara (server-side verification). */
 export async function fetchKobaraPayment(paymentId: string): Promise<KobaraPayment | null> {
   const res = await fetch(`${KOBARA_BASE_URL}/api/v1/payments/${encodeURIComponent(paymentId)}`, {
-    headers: { Authorization: `Bearer ${secretKey()}`, Accept: "application/json" },
+    headers: { Authorization: `Bearer ${apiKey()}`, Accept: "application/json" },
   });
   if (!res.ok) {
     console.error("Kobara fetch payment failed", res.status);

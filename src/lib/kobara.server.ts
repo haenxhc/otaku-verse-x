@@ -83,6 +83,11 @@ export async function createKobaraPayment(input: CreatePaymentInput): Promise<Ko
   const text = await res.text();
   if (!res.ok) {
     console.error("Kobara create payment failed", res.status, text.slice(0, 500));
+    if (res.status === 401 || res.status === 403) {
+      throw new Error(
+        "Paiement refusé par Kobara : la clé KOBARA_SECRET_KEY est invalide ou expirée. Mets à jour la clé secrète dans les paramètres du projet.",
+      );
+    }
     throw new Error("Le paiement n'a pas pu être initialisé auprès de Kobara.");
   }
   const payment = unwrap(JSON.parse(text));

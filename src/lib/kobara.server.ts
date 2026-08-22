@@ -28,11 +28,16 @@ export interface KobaraPayment {
   transaction_id?: string | null;
 }
 
-function secretKey(): string {
-  const key = process.env["KOBARA_SECRET_KEY"];
+/**
+ * API key used to authenticate against Kobara.
+ * Prefers the secret key, falls back to the public/publishable key when the
+ * project is configured with one only.
+ */
+function apiKey(): string {
+  const key = process.env["KOBARA_SECRET_KEY"] || process.env["KOBARA_PUBLIC_KEY"];
   if (!key) {
     throw new Error(
-      "Paiements indisponibles : la clé KOBARA_SECRET_KEY n'est pas configurée sur le serveur.",
+      "Paiements indisponibles : aucune clé Kobara (KOBARA_PUBLIC_KEY ou KOBARA_SECRET_KEY) n'est configurée.",
     );
   }
   return key;

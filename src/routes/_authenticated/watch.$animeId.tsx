@@ -5,9 +5,8 @@ import { Crown, Loader2, Lock, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAuth } from "@/hooks/useAuth";
 import { useServerFn } from "@tanstack/react-start";
-import { getWatchInfo } from "@/lib/watch.functions";
+import { getWatchInfo, saveWatchProgress } from "@/lib/watch.functions";
 
 export const Route = createFileRoute("/_authenticated/watch/$animeId")({
   head: () => ({
@@ -24,10 +23,10 @@ export const Route = createFileRoute("/_authenticated/watch/$animeId")({
 function WatchPage() {
   const { animeId } = useParams({ from: "/_authenticated/watch/$animeId" });
   const navigate = useNavigate();
-  const { user } = useAuth();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [episode, setEpisode] = useState(1);
   const getInfo = useServerFn(getWatchInfo);
+  const saveProgress = useServerFn(saveWatchProgress);
 
   const info = useQuery({
     queryKey: ["watch-info", animeId, episode],
@@ -35,10 +34,30 @@ function WatchPage() {
   });
 
   useEffect(() => {
-    if (videoRef.current && info.data?.sourceUrl) {
-      videoRef.current.load();
-    }
-  }, [info.data?.sourceUrl]);
+    const el = videoRef.current;
+    if (!el || !info.data?.sourceUrl) return;
+    el.load();
+    if (info.data.position > 0) el.currentTime = info.data.position;
+
+    let last = 0;
+    const onTime = () => {
+      if (el.currentTime - last < 15) return;
+      last = el.currentTime;
+      void saveProgress({
+        data: {
+          animeId: Number(animeId),
+          episode,
+          positionSeconds: Math.floor(el.currentTime),
+          durationSeconds: Number.isFinite(el.duration) ? Math.floor(el.duration) : null,
+          title: info.data?.title ?? null,
+          coverImage: info.data?.coverImage ?? null,
+        },
+      }).catch(() => undefined);
+    };
+    el.addEventListener("timeupdate", onTime);
+    return () => el.removeEventListener("timeupdate", onTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info.data?.sourceUrl, info.data?.position, animeId, episode]);
 
   if (info.isLoading) {
     return (
